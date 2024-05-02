@@ -5,6 +5,7 @@ abstract class Kniha {
     List<String> autor;
     int rok;
     boolean dostupnost;
+
     
     public Kniha(String nazov, List<String> autor, int rok, boolean dostupnost) {
         this.nazov = nazov;
@@ -12,6 +13,7 @@ abstract class Kniha {
         this.rok = rok;
         this.dostupnost = dostupnost;
     }
+
 
     public String getNazov() {
         return nazov;
