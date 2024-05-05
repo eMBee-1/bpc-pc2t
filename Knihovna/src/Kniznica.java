@@ -4,123 +4,146 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
+
 
 public class Kniznica {
 
-    public Database db;
+    private List<Kniha> books = new ArrayList<>(); 
+    private Database db;
 
     public Kniznica(Database db) {
         this.db = db;
     }
 
-    public void pridajKnihu(Kniha kniha) {
+    public void loadBooks() {
         if (db.connect() != null) {
-            db.addKniha(kniha);
+            this.books = db.nacitajDatabazu();
             db.disconnect();
         } else {
-            System.out.println("Nepodarilo sa pripojiť k databáze.");
+            System.err.println("Nepodarilo sa pripojiť k databáze na začiatku.");
+        }
+    }
+    
+    public void aktualizujKnihu(String nazov, List<String> autori, Integer rok, String dostupnost) {
+        for (Kniha kniha : books) {
+            if (kniha.getNazov().equals(nazov)) {
+                if (autori != null && !autori.isEmpty()) {
+                    kniha.setAutori(autori);
+                }
+                if (rok != null) {
+                    kniha.setRok(rok);
+                }
+                if (dostupnost != null) {
+                    kniha.setDostupnost(dostupnost);
+                }
+                break; 
+            }
         }
     }
 
-    public void odstranKnihu(String nazov) {
+
+    public void ulozZmeny() {
         if (db.connect() != null) {
-            db.removeBook(nazov);
+            db.ulozDatabazu(books);
             db.disconnect();
         } else {
-            System.out.println("Nepodarilo sa pripojiť k databáze.");
+            System.err.println("Nepodarilo sa pripojiť k databáze pri ukončení.");
+        }
+    }
+
+    public void pridajKnihu(Kniha kniha) {
+        books.add(kniha);
+        System.out.println("Kniha '" + kniha.getNazov() + "' bola pridaná do knižnice.");
+    }
+
+    public void odstranKnihu(String nazov) {
+        boolean bolOdstraneny = books.removeIf(kniha -> kniha.getNazov().equals(nazov));
+        if (bolOdstraneny) {
+            System.out.println("Kniha '" + nazov + "' bola úspešne odstránená z knižnice.");
+        } else {
+            System.out.println("Kniha '" + nazov + "' sa v knižnici nenachádza.");
         }
     }
 
     public void vypisKnihy() {
-        if (db.connect() != null) {
-            List<Kniha> books = db.getAllBooks();
-            db.disconnect();
-            
-
-            Collections.sort(books, Comparator.comparing(Kniha::getNazov));
-            
-            for (Kniha kniha : books) {
-                System.out.print("Nazov: " + kniha.getNazov() + ", Autor: " + String.join(", ", kniha.getAutori()) + ", ");
-                if (kniha instanceof Romany) {
-                    System.out.print("Zaner: " + ((Romany) kniha).getZaner() + ", ");
-                } else if (kniha instanceof Ucebnice) {
-                    System.out.print("Rocnik: " + ((Ucebnice) kniha).getRocnik() + ", ");
-                }
-                System.out.println("Rok: " + kniha.getRok() + ", Dostupnost: " + kniha.getDostupnost());
+        Collections.sort(books, Comparator.comparing(Kniha::getNazov));
+        for (Kniha kniha : books) {
+            System.out.print("Nazov: " + kniha.getNazov() + ", Autor: " + String.join(", ", kniha.getAutori()) + ", ");
+            if (kniha instanceof Romany) {
+                System.out.print("Zaner: " + ((Romany) kniha).getZaner() + ", ");
+            } else if (kniha instanceof Ucebnice) {
+                System.out.print("Rocnik: " + ((Ucebnice) kniha).getRocnik() + ", ");
             }
-        } else {
-            System.out.println("Nepodarilo sa pripojiť k databáze.");
+            System.out.println("Rok: " + kniha.getRok() + ", Dostupnost: " + kniha.getDostupnost());
         }
+    }
+
+    public Kniha vyhladajKnihu(String nazov) {
+        return books.stream()
+            .filter(k -> k.getNazov().equalsIgnoreCase(nazov))
+            .findFirst()
+            .orElse(null);
     }
 
     public void vypisKnihyPodlaAutora(String autor) {
-        if (db.connect() != null) {
-            List<Kniha> books = db.getBooksByAuthor(autor);
-            db.disconnect();
-            if (books.isEmpty()) {
-                System.out.println("Žiadne knihy nenájdené pre autora: " + autor);
-            } else {
-                for (Kniha kniha : books) {
-                    System.out.print("Nazov: " + kniha.getNazov() + ", Autor: " + String.join(", ", kniha.getAutori()) + ", ");
-                    if (kniha instanceof Romany) {
-                        System.out.print("Zaner: " + ((Romany) kniha).getZaner() + ", ");
-                    } else if (kniha instanceof Ucebnice) {
-                        System.out.print("Rocnik: " + ((Ucebnice) kniha).getRocnik() + ", ");
-                    }
-                    System.out.println("Rok: " + kniha.getRok() + ", Dostupnost: " + kniha.getDostupnost());
-                }
-            }
+        List<Kniha> filteredBooks = books.stream()
+            .filter(kniha -> kniha.getAutori().contains(autor))
+            .collect(Collectors.toList());
+        if (filteredBooks.isEmpty()) {
+            System.out.println("Žiadne knihy nenájdené pre autora: " + autor);
         } else {
-            System.out.println("Nepodarilo sa pripojiť k databáze.");
+            filteredBooks.forEach(this::zobrazDetaily);
         }
     }
-    
+
     public void vypisKnihyPodlaZanru(String zaner) {
-        if (db.connect() != null) {
-            List<Kniha> books = db.getBooksByGenre(zaner);
-            db.disconnect();
-            if (books.isEmpty()) {
-                System.out.println("Žiadne knihy nenájdené pre žáner: " + zaner);
-            } else {
-                for (Kniha kniha : books) {
-                    System.out.println("Nazov: " + kniha.getNazov() + ", Autor: " + String.join(", ", kniha.getAutori()) + ", Zaner: " + zaner + ", Rok: " + kniha.getRok() + ", Dostupnost: " + kniha.getDostupnost());
-                }
-            }
+        List<Kniha> filteredBooks = books.stream()
+            .filter(kniha -> kniha instanceof Romany && ((Romany)kniha).getZaner().equalsIgnoreCase(zaner))
+            .collect(Collectors.toList());
+        if (filteredBooks.isEmpty()) {
+            System.out.println("Žiadne knihy nenájdené pre žáner: " + zaner);
         } else {
-            System.out.println("Nepodarilo sa pripojiť k databáze.");
+            filteredBooks.forEach(this::zobrazDetaily);
         }
     }
- 
-    public void vyhladajKnihu(String nazov) {
-        Kniha kniha = db.findBookByName(nazov);
-        if (kniha == null) {
-            System.out.println("Knihu s názvom '" + nazov + "' sa nepodarilo nájsť.");
+
+    public void vypisVypozicaneKnihy() {
+        List<Kniha> borrowedBooks = books.stream()
+            .filter(kniha -> kniha.getDostupnost().equalsIgnoreCase("vypozicana"))
+            .collect(Collectors.toList());
+        if (borrowedBooks.isEmpty()) {
+            System.out.println("Žiadne vypožičané knihy.");
         } else {
-            System.out.println("Nájdená kniha:");
-                System.out.print("Nazov: " + kniha.getNazov() + ", Autor: " + String.join(", ", kniha.getAutori()) + ", ");
-                if (kniha instanceof Romany) {
-                    System.out.print("Zaner: " + ((Romany) kniha).getZaner() + ", ");
-                } else if (kniha instanceof Ucebnice) {
-                    System.out.print("Rocnik: " + ((Ucebnice) kniha).getRocnik() + ", ");
-                }
-                System.out.println("Rok: " + kniha.getRok() + ", Dostupnost: " + 
-                kniha.getDostupnost());
-            }        
+            borrowedBooks.forEach(this::zobrazDetaily);
+        }
     }
-    
+
+    public void zmenDostupnostKnihy(String nazov, String novaDostupnost) {
+        Kniha kniha = vyhladajKnihu(nazov);
+        if (kniha != null) {
+            kniha.setDostupnost(novaDostupnost);
+        } else {
+            System.out.println("Knihu s názvom '" + nazov + "' sa nepodarilo nájsť.");
+        }
+    }
+
+    private void zobrazDetaily(Kniha kniha) {
+        System.out.println("Nazov: " + kniha.getNazov() + ", Autori: " + String.join(", ", kniha.getAutori()) + ", Zaner: " + ((Romany)kniha).getZaner() + ", Rok: " + kniha.getRok() + ", Dostupnost: " + kniha.getDostupnost());
+    }
+
     public void ulozKnihuDoSuboru(String nazovKnihy) {
-        Kniha kniha = db.findBookByName(nazovKnihy);
+        Kniha kniha = vyhladajKnihu(nazovKnihy);
         if (kniha == null) {
             System.out.println("Knihu s názvom '" + nazovKnihy + "' sa nepodarilo nájsť.");
         } else {
             try (PrintWriter out = new PrintWriter(new FileWriter(nazovKnihy + ".txt"))) {
                 out.println("Názov: " + kniha.getNazov());
                 out.println("Autori: " + String.join(", ", kniha.getAutori()));
-                out.println("Typ: " + kniha.getTyp());
                 if (kniha instanceof Romany) {
                     out.println("Žáner: " + ((Romany) kniha).getZaner());
                 } else if (kniha instanceof Ucebnice) {
@@ -128,75 +151,25 @@ public class Kniznica {
                 }
                 out.println("Rok: " + kniha.getRok());
                 out.println("Dostupnosť: " + kniha.getDostupnost());
-                System.out.println("Informácie o knihe boli uložené do súboru "+kniha.getNazov()+".txt");
+                out.println("Typ: " + kniha.getTyp());
             } catch (IOException e) {
                 System.out.println("Chyba pri zapisovaní do súboru: " + e.getMessage());
             }
         }
     }
-    
+
     public void nacitajKnihuZoSuboru(String nazovKnihy) {
-        String cestaSuboru = nazovKnihy + ".txt";  
-        try (BufferedReader reader = new BufferedReader(new FileReader(cestaSuboru))) {
+        String nazovSuboru = nazovKnihy + ".txt"; 
+        try (BufferedReader reader = new BufferedReader(new FileReader(nazovSuboru))) {
             String line;
-            String nazov = "";
-            List<String> autori = new ArrayList<>();
-            int rok = 0;
-            String dostupnost = "";
-            String typKnihy = "";
-
+            System.out.println("Informácie o knihe '" + nazovKnihy + "':");
             while ((line = reader.readLine()) != null) {
-                if (line.startsWith("Názov: ")) {
-                    nazov = line.split(": ")[1];
-                } else if (line.startsWith("Autori: ")) {
-                    autori = Arrays.asList(line.split(": ")[1].split(", "));
-                } else if (line.startsWith("Rok: ")) {
-                    rok = Integer.parseInt(line.split(": ")[1]);
-                } else if (line.startsWith("Dostupnosť: ")) {
-                    dostupnost = line.split(": ")[1];
-                } else if (line.startsWith("Typ: ")) {
-                    typKnihy = line.split(": ")[1];
-                }
+                if (line.trim().isEmpty()) continue; 
+                System.out.println(line); 
             }
-
-            if (!nazov.isEmpty()) {
-                Kniha kniha = new Kniha(nazov, autori, rok, dostupnost, typKnihy);
-                System.out.println("Názov: " + kniha.getNazov());
-                System.out.println("Autori: " + String.join(", ", kniha.getAutori()));
-                System.out.println("Rok: " + kniha.getRok());
-                System.out.println("Dostupnosť: " + kniha.getDostupnost());
-                System.out.println("Typ: " + kniha.getTyp());
-            } else {
-                System.out.println("Súbor neobsahuje žiadne údaje o knihe.");
-            }
-
         } catch (IOException e) {
-            System.out.println("Chyba pri čítaní zo súboru: " + e.getMessage());
-        } 
-    }
-
-
-    
-    public void vypisVypozicaneKnihy() {
-        List<Kniha> borrowedBooks = db.getBorrowedBooks();
-        if (borrowedBooks.isEmpty()) {
-            System.out.println("Žiadne vypožičané knihy.");
-        } else {
-            for (Kniha kniha : borrowedBooks) {
-                System.out.println("Názov: " + kniha.getNazov() + ", Typ: " + kniha.getTyp());
-            }
-        } 
-    
-
-    }
-    
-    public void zmenDostupnostKnihy(String nazov3, String dostupnost3) {
-        if (db.connect() != null) {
-            db.updateBookAvailability(nazov3, dostupnost3);
-            db.disconnect();
-        } else {
-            System.out.println("Nepodarilo sa pripojiť k databáze.");
+            System.out.println("Chyba pri čítaní zo súboru '" + nazovSuboru + "': " + e.getMessage());
         }
     }
-}
 
+}
