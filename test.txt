@@ -1,6 +1,0 @@
-Názov: test
-Autori: hdjs dfj
-Žáner: rytiersky
-Rok: 2
-Dostupnosť: dostupna
-Typ: ROMAN
