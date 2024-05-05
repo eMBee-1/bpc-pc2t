@@ -346,8 +346,7 @@ public class AplikaciaKniznica extends Kniznica {
                     ;
                     break;
                case 9:
-                    dostupnost = "vypozicana";
-                    aplikacia.vypisVypozicaneKnihy(dostupnost);
+                    aplikacia.vypisVypozicaneKnihy();
                     break;
                 case 10:
                     System.out.println("Zadajte názov knihy, ktorú chcete uložiť:");

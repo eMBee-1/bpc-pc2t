@@ -17,9 +17,6 @@ public class Kniha {
         this.typKnihy = typKnihy;
     }
 
-
-
-    // Gettery a settery
     public String getNazov() {
         return nazov;
     }

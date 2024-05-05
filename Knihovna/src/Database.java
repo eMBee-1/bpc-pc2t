@@ -99,11 +99,9 @@ public class Database {
             return;
         }
         try {
-            // Clear the existing data
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute("DELETE FROM books");
             }
-            // Insert new data
             String sql = "INSERT INTO books (nazov, autor, typ, zaner, rocnik, rok, stav) VALUES (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 for (Kniha kniha : books) {
