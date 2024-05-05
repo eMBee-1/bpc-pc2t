@@ -237,7 +237,7 @@ public class AplikaciaKniznica extends Kniznica {
                     aplikacia.ulozKnihuDoSuboru(hladanyNazovKnihy);
                     break;
                 case 11:
-                    System.out.println("Zadajte cestu a názov súboru pre načítanie informácií o knihe:");
+                    System.out.println("Zadajte názov súboru pre načítanie informácií o knihe:");
                     String cestaSuboru = sc.nextLine();
                     aplikacia.nacitajKnihuZoSuboru(cestaSuboru);
                     break;    
