@@ -7,33 +7,29 @@ import java.util.Scanner;
 public class AplikaciaKniznica extends Kniznica {
     private Database db;
 
-
     public AplikaciaKniznica(Database db) {
         super(db);
         this.db = db;
-    }
-
-
-    public AplikaciaKniznica() {
-        super(new Database());
-        this.db = super.db;
+       
         if (db.connect() != null) {
-            db.createTables(); 
+            db.createTables();
+            List<Kniha> loadedBooks = db.nacitajDatabazu();
+            db.disconnect();
+            super.loadBooks();
         } else {
             System.err.println("Databaza nebola vytvorena.");
         }
-        db.disconnect();
     }
 
     public static void main(String[] args) {
-        AplikaciaKniznica aplikacia = new AplikaciaKniznica();
-
+        AplikaciaKniznica aplikacia = new AplikaciaKniznica(new Database());
         Scanner sc = new Scanner(System.in);
         boolean program = true;
 
         System.out.println("--------------------------------------");
         System.out.println("Vitajte v aplikacii na spravu kniznice");
         System.out.println("--------------------------------------");
+
 
         while (program) {
             System.out.println("1 - Pridajte knihu");
@@ -141,8 +137,8 @@ public class AplikaciaKniznica extends Kniznica {
                     int vyberDostupnost = 0;
                     while (true) {
                         System.out.println("Vyberte dostupnost knihy:");
-                        System.out.println("1 - dostupna");
-                        System.out.println("2 - vypozicana");
+                        System.out.println("1 - dostupná");
+                        System.out.println("2 - vypožičaná");
 
                         if (sc.hasNextInt()) {
                         	vyberDostupnost = sc.nextInt();
@@ -227,8 +223,9 @@ public class AplikaciaKniznica extends Kniznica {
                         boolean validnyRocnik = false;
 
                         while (!validnyRocnik) {
-                           
+                        	System.out.println("Zadajte ročník ucebnice: ");
                             if (sc.hasNextInt()) {
+                            	
                                 rocnik = sc.nextInt();
                                 sc.nextLine();  
                                 if (rocnik >= 1500 && rocnik <= 2024) {
@@ -272,7 +269,7 @@ public class AplikaciaKniznica extends Kniznica {
                         default:
                             break;
                     }
-                    aplikacia.db.updateBook(nazov1, autor1, rok1, dostupnost2);
+                    aplikacia.aktualizujKnihu(nazov1, autor1, rok1, dostupnost2);
                     break;
                 case 3:
                     System.out.println("Zadajte nazov knihy, ktoru chcete odstranit: ");
@@ -362,13 +359,17 @@ public class AplikaciaKniznica extends Kniznica {
                     aplikacia.nacitajKnihuZoSuboru(cestaSuboru);
                     break;    
                 case 12:
+                    System.out.println("Ukladám zmeny do databázy...");
+                    aplikacia.db.connect();
+                    aplikacia.ulozZmeny();  
+                    aplikacia.db.disconnect();
                     System.out.println("Dovidenia.");
                     program = false;
                     break;
                 default:
-                    System.out.println("Prosím vyberte možnosť z ponuky.");    
+                    System.out.println("Prosím vyberte možnosť z ponuky.");
             }
         }
-        sc.close(); 
+        sc.close();
     }
 }
