@@ -13,7 +13,6 @@ public class AplikaciaKniznica extends Kniznica {
        
         if (db.connect() != null) {
             db.createTables();
-            List<Kniha> loadedBooks = db.nacitajDatabazu();
             db.disconnect();
             super.loadBooks();
         } else {
