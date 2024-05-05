@@ -113,13 +113,11 @@ public class Kniznica {
     }
 
     public void vypisVypozicaneKnihy() {
-        List<Kniha> borrowedBooks = books.stream()
-            .filter(kniha -> kniha.getDostupnost().equalsIgnoreCase("vypozicana"))
-            .collect(Collectors.toList());
-        if (borrowedBooks.isEmpty()) {
-            System.out.println("Žiadne vypožičané knihy.");
-        } else {
-            borrowedBooks.forEach(this::zobrazDetaily);
+        System.out.println("Vypožičané knihy:");
+        for (Kniha kniha : books) {
+            if ("vypozicana".equals(kniha.getDostupnost())) {
+                zobrazDetaily(kniha);
+            }
         }
     }
 
@@ -132,8 +130,19 @@ public class Kniznica {
         }
     }
 
-    private void zobrazDetaily(Kniha kniha) {
-        System.out.println("Nazov: " + kniha.getNazov() + ", Autori: " + String.join(", ", kniha.getAutori()) + ", Zaner: " + ((Romany)kniha).getZaner() + ", Rok: " + kniha.getRok() + ", Dostupnost: " + kniha.getDostupnost());
+    public void zobrazDetaily(Kniha kniha) {
+        System.out.print("Názov: " + kniha.getNazov() + ", Autori: " + String.join(", ", kniha.getAutori()) + ", Rok: " + kniha.getRok() + ", Dostupnosť: " + kniha.getDostupnost());
+
+        // Kontrola typu knihy pred prístupom k špecifickým atribútom
+        if (kniha instanceof Romany) {
+            Romany romany = (Romany) kniha;
+            System.out.print(", Žáner: " + romany.getZaner());
+        } else if (kniha instanceof Ucebnice) {
+            Ucebnice ucebnice = (Ucebnice) kniha;
+            System.out.print(", Ročník: " + ucebnice.getRocnik());
+        }
+
+        System.out.println(); // Nový riadok na konci detailov
     }
 
     public void ulozKnihuDoSuboru(String nazovKnihy) {
