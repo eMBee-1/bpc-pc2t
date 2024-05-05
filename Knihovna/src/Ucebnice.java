@@ -4,12 +4,12 @@ public class Ucebnice extends Kniha {
 
     private int rocnik;
 
-    public Ucebnice(String nazov, List<String> autor, int rok, boolean dostupnost, int rocnik) {
-        super(nazov, autor, rok, dostupnost);
-        this.setRocnik(rocnik);
+    public Ucebnice(String nazov, List<String> autori, int rocnik, int rok, String dostupnost, String typKnihy) {
+    	super(nazov, autori, rok, dostupnost, typKnihy); 
+        this.rocnik = rocnik;
     }
 
-	public int getRocnik() {
+    public int getRocnik() {
 		return rocnik;
 	}
 

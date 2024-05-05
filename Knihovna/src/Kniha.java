@@ -1,20 +1,25 @@
 import java.util.List;
 
-abstract class Kniha {
-    String nazov;
-    List<String> autor;
-    int rok;
-    boolean dostupnost;
+public class Kniha {
+    private String nazov;
+    private List<String> autori;
+    private int rok;
+    private String dostupnost;
+    private String typKnihy; 
 
-    
-    public Kniha(String nazov, List<String> autor, int rok, boolean dostupnost) {
+
+
+    public Kniha(String nazov, List<String> autori, int rok, String dostupnost, String typKnihy) {
         this.nazov = nazov;
-        this.autor = autor;
+        this.autori = autori;
         this.rok = rok;
         this.dostupnost = dostupnost;
+        this.typKnihy = typKnihy;
     }
 
 
+
+    // Gettery a settery
     public String getNazov() {
         return nazov;
     }
@@ -23,15 +28,15 @@ abstract class Kniha {
         this.nazov = nazov;
     }
 
-    public List<String> getAutor() {
-        return autor;
+    public List<String> getAutori() {
+        return autori;
     }
 
-    public void setAutor(List<String> autor) {
-        this.autor = autor;
+    public void setAutori(List<String> autori) {
+        this.autori = autori;
     }
 
-    public int getRok () {
+    public int getRok() {
         return rok;
     }
 
@@ -39,11 +44,19 @@ abstract class Kniha {
         this.rok = rok;
     }
 
-    public boolean getDostupnost() {
+    public String getDostupnost() {
         return dostupnost;
     }
 
-    public void setDostupnost(boolean dostupnost) {
+    public void setDostupnost(String dostupnost) {
         this.dostupnost = dostupnost;
+    }
+
+    public String getTyp() {
+        return typKnihy;
+    }
+
+    public void setTyp(String typKnihy) {
+        this.typKnihy = typKnihy;
     }
 }
