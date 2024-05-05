@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -127,24 +128,22 @@ public class Kniznica {
                 }
                 out.println("Rok: " + kniha.getRok());
                 out.println("Dostupnosť: " + kniha.getDostupnost());
-                System.out.println("Informácie o knihe boli uložené do súboru 'Detail_knihy.txt'.");
+                System.out.println("Informácie o knihe boli uložené do súboru "+kniha.getNazov()+".txt");
             } catch (IOException e) {
                 System.out.println("Chyba pri zapisovaní do súboru: " + e.getMessage());
             }
         }
     }
     
-    public void nacitajKnihuZoSuboru(String cestaSuboru) {
-        String cestaSuboru2 = cestaSuboru; 
-        try (BufferedReader reader = new BufferedReader(new FileReader(cestaSuboru2))) {
+    public void nacitajKnihuZoSuboru(String nazovKnihy) {
+        String cestaSuboru = nazovKnihy + ".txt";  
+        try (BufferedReader reader = new BufferedReader(new FileReader(cestaSuboru))) {
             String line;
             String nazov = "";
-            List<String> autori = null;
+            List<String> autori = new ArrayList<>();
             int rok = 0;
             String dostupnost = "";
-            String zaner = "";
             String typKnihy = "";
-            int rocnik = 0;
 
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("Názov: ")) {
@@ -157,33 +156,16 @@ public class Kniznica {
                     dostupnost = line.split(": ")[1];
                 } else if (line.startsWith("Typ: ")) {
                     typKnihy = line.split(": ")[1];
-                } else if (line.startsWith("Žáner: ")) {
-                    zaner = line.split(": ")[1];
-                } else if (line.startsWith("Rocnik: ")) {
-                    rocnik = Integer.parseInt(line.split(": ")[1]);
                 }
             }
 
             if (!nazov.isEmpty()) {
-                if (typKnihy.equals("Román")) {
-                    Kniha kniha = new Romany(nazov, autori, zaner, rok, dostupnost, typKnihy);
-                    System.out.println("Názov: " + kniha.getNazov());
-                    System.out.println("Autori: " + String.join(", ", kniha.getAutori()));
-                    System.out.println("Rok: " + kniha.getRok());
-                    System.out.println("Dostupnosť: " + (kniha.getDostupnost()));
-                    System.out.println("Žáner: " + ((Romany) kniha).getZaner());
-                    System.out.println("Typ: " + kniha.getTyp());
-
-                } else if (typKnihy.equals("Učebnica")) {
-                    Kniha kniha = new Ucebnice(nazov, autori, rocnik, rok, dostupnost, typKnihy);
-                    System.out.println("Názov: " + kniha.getNazov());
-                    System.out.println("Autori: " + String.join(", ", kniha.getAutori()));
-                    System.out.println("Rok: " + kniha.getRok());
-                    System.out.println("Dostupnosť: " + (kniha.getDostupnost()));
-                    System.out.println("Rocnik: " + ((Ucebnice) kniha).getRocnik());
-                    System.out.println("Typ: " + kniha.getTyp());
-                }
-
+                Kniha kniha = new Kniha(nazov, autori, rok, dostupnost, typKnihy);
+                System.out.println("Názov: " + kniha.getNazov());
+                System.out.println("Autori: " + String.join(", ", kniha.getAutori()));
+                System.out.println("Rok: " + kniha.getRok());
+                System.out.println("Dostupnosť: " + kniha.getDostupnost());
+                System.out.println("Typ: " + kniha.getTyp());
             } else {
                 System.out.println("Súbor neobsahuje žiadne údaje o knihe.");
             }
@@ -191,7 +173,9 @@ public class Kniznica {
         } catch (IOException e) {
             System.out.println("Chyba pri čítaní zo súboru: " + e.getMessage());
         } 
-    } 
+    }
+
+
     
     public void vypisVypozicaneKnihy() {
         List<Kniha> borrowedBooks = db.getBorrowedBooks();
@@ -215,3 +199,4 @@ public class Kniznica {
         }
     }
 }
+
