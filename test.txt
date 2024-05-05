@@ -1,6 +1,6 @@
 Názov: test
-Autori: jhsfd kldsfhj
-Typ: ROMAN
+Autori: hdjs dfj
 Žáner: rytiersky
-Rok: 5646
-Dostupnosť: vypozicana
+Rok: 2
+Dostupnosť: dostupna
+Typ: ROMAN

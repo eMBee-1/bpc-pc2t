@@ -304,7 +304,7 @@ public class AplikaciaKniznica extends Kniznica {
                 case 6:
                     System.out.println("Zadajte názov knihy, ktorú chcete vyhľadať:");
                     String hladanyNazov = sc.nextLine();
-                    aplikacia.vyhladajKnihu(hladanyNazov);
+                    aplikacia.vypisNajdenuKnihu(hladanyNazov);
                     break;
                 case 7:
                     System.out.println("Zadajte meno autora:");
@@ -346,7 +346,8 @@ public class AplikaciaKniznica extends Kniznica {
                     ;
                     break;
                case 9:
-                    aplikacia.vypisVypozicaneKnihy();
+                    dostupnost = "vypozicana";
+                    aplikacia.vypisVypozicaneKnihy(dostupnost);
                     break;
                 case 10:
                     System.out.println("Zadajte názov knihy, ktorú chcete uložiť:");

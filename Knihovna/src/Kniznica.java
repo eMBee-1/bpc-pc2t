@@ -90,6 +90,24 @@ public class Kniznica {
             .orElse(null);
     }
 
+    public void vypisNajdenuKnihu(String hladanynazov) {
+        Kniha najdenaKniha = vyhladajKnihu(hladanynazov);
+        if (najdenaKniha != null) {
+            System.out.print("Názov: " + najdenaKniha.getNazov() + ", Autori: " + String.join(", ", najdenaKniha.getAutori()) + ", Rok: " + najdenaKniha.getRok() + ", Dostupnosť: " + najdenaKniha.getDostupnost());
+
+        if (najdenaKniha instanceof Romany) {
+            Romany romany = (Romany) najdenaKniha;
+            System.out.print(", Žáner: " + romany.getZaner());
+        } else if (najdenaKniha instanceof Ucebnice) {
+            Ucebnice ucebnice = (Ucebnice) najdenaKniha;
+            System.out.print(", Ročník: " + ucebnice.getRocnik());
+        }
+        } else {
+            System.out.println("Kniha s názvom '" + hladanynazov + "' nebola nájdená.");
+        }
+        System.out.println();
+    }
+
     public void vypisKnihyPodlaAutora(String autor) {
         List<Kniha> filteredBooks = books.stream()
             .filter(kniha -> kniha.getAutori().contains(autor))
@@ -113,10 +131,11 @@ public class Kniznica {
     }
 
     public void vypisVypozicaneKnihy() {
-        System.out.println("Vypožičané knihy:");
         for (Kniha kniha : books) {
             if ("vypozicana".equals(kniha.getDostupnost())) {
-                zobrazDetaily(kniha);
+                System.out.println("Vypožičané knihy:");
+                System.out.print("Názov: " + kniha.getNazov() + ", Typ: " + kniha.getTyp());
+                System.out.println();
             }
         }
     }
@@ -133,7 +152,6 @@ public class Kniznica {
     public void zobrazDetaily(Kniha kniha) {
         System.out.print("Názov: " + kniha.getNazov() + ", Autori: " + String.join(", ", kniha.getAutori()) + ", Rok: " + kniha.getRok() + ", Dostupnosť: " + kniha.getDostupnost());
 
-        // Kontrola typu knihy pred prístupom k špecifickým atribútom
         if (kniha instanceof Romany) {
             Romany romany = (Romany) kniha;
             System.out.print(", Žáner: " + romany.getZaner());
@@ -141,8 +159,7 @@ public class Kniznica {
             Ucebnice ucebnice = (Ucebnice) kniha;
             System.out.print(", Ročník: " + ucebnice.getRocnik());
         }
-
-        System.out.println(); // Nový riadok na konci detailov
+        System.out.println(); 
     }
 
     public void ulozKnihuDoSuboru(String nazovKnihy) {
