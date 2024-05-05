@@ -137,8 +137,8 @@ public class AplikaciaKniznica extends Kniznica {
                     int vyberDostupnost = 0;
                     while (true) {
                         System.out.println("Vyberte dostupnost knihy:");
-                        System.out.println("1 - dostupná");
-                        System.out.println("2 - vypožičaná");
+                        System.out.println("1 - dostupna");
+                        System.out.println("2 - vypozicana");
 
                         if (sc.hasNextInt()) {
                         	vyberDostupnost = sc.nextInt();
@@ -228,14 +228,14 @@ public class AplikaciaKniznica extends Kniznica {
                             	
                                 rocnik = sc.nextInt();
                                 sc.nextLine();  
-                                if (rocnik >= 1500 && rocnik <= 2024) {
+                                if (rocnik >= 1 && rocnik <= 9) {
                                     validnyRocnik = true;
                                 } else {
-                                    System.err.println("CHYBA! Neplatný ročník. Zadajte ročník v rozmedzí 1500 - 2024.");
+                                    System.err.println("CHYBA! Neplatný ročník. Zadajte ročník v rozmedzí 1 - 9.");
                                 }
                             } else {
                                 sc.next();  
-                                System.err.println("CHYBA! Zadali ste neplatnú hodnotu. Zadajte číslo od 1500 do 2024.");
+                                System.err.println("CHYBA! Zadali ste neplatnú hodnotu. Zadajte číslo od 1 do 9.");
                             }
                         }
 
