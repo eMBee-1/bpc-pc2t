@@ -69,28 +69,94 @@ public class AplikaciaKniznica extends Kniznica {
             switch (moznost) {
                 case 1:
                     System.out.println("Zadajte pocet autorov knihy: ");
-                    int pocetAutorov = sc.nextInt();
-                    sc.nextLine();
+                    int pocetAutorov = 0;
+                    
+                    while (true) {
+                        try {
+                            pocetAutorov = sc.nextInt();
+                            sc.nextLine();  
+                            break;
+                        } catch (InputMismatchException e) {
+                            System.err.println("CHYBA! Zadali ste neplatnú hodnotu.");
+                            sc.next();
+                        }
+                    }
+
                     List<String> autor = new ArrayList<>(pocetAutorov);
                     for (int i = 0; i < pocetAutorov; i++) {
                         System.out.println("Zadajte autora: ");
-                        autor.add(sc.nextLine());
+                        String menoAutora;
+                        while (true) {
+                            menoAutora = sc.nextLine();
+                            if (menoAutora.matches("^[a-zA-ZáéíóúýčďľňřšťžůäěöüßÁÉÍÓÚÝČĎĽŇŘŠŤŽŮÄĚÖÜß]+(?:\\s+[a-zA-ZáéíóúýčďľňřšťžůäěöüßÁÉÍÓÚÝČĎĽŇŘŠŤŽŮÄĚÖÜß]+)*$")) {
+                                autor.add(menoAutora);
+                                break;
+                            } else {
+                                System.err.println("CHYBA! Zadajte meno autora.");
+                            }
+                        }
                     }
-                    System.out.println("Zadajte typ knihy: ");
-                    System.out.println("1 - Romany");
-                    System.out.println("2 - Ucebnice");
-                    int typ = sc.nextInt();
-                    sc.nextLine();
+                    
+                    int typ = 0;
+                    while (true) {
+                        System.out.println("Zadajte typ knihy: ");
+                        System.out.println("1 - Romany");
+                        System.out.println("2 - Ucebnice");
+
+                        if (sc.hasNextInt()) {
+                            typ = sc.nextInt();
+                            sc.nextLine();
+                            if (typ == 1 || typ == 2) {
+                                break;
+                            } else {
+                                System.err.println("CHYBA! Zadali ste neplatnú hodnotu.");
+                            }
+                        } else {
+                            System.err.println("CHYBA! Zadali ste neplatnú hodnotu.");
+                            sc.next();  
+                        }
+                    }
+
                     String typKnihy = (typ == 1) ? "ROMAN" : "UCEBNICA";
                     System.out.println("Zadajte nazov knihy: ");
                     String nazov = sc.nextLine();
                     System.out.println("Zadajte rok vydania: ");
-                    int rok = sc.nextInt();
-                    sc.nextLine();
-                    System.out.println("Vyberte dostupnost knihy: ");
-                    System.out.println("1 - dostupna");
-                    System.out.println("2 - vypozicana");
-                    int vyberDostupnost = sc.nextInt();
+                    int rok = 0;
+                    boolean validnyRok = false;
+
+                    while (!validnyRok) {
+                        if (sc.hasNextInt()) {
+                            rok = sc.nextInt();
+                            sc.nextLine();  
+                            if (rok >= 0 && rok <= 2024) {
+                                validnyRok = true;
+                            } else {
+                                System.err.println("CHYBA! Neplatný rok. Zadajte rok v rozmedzí 0 - 2024.");
+                            }
+                        } else {
+                            sc.next();  
+                            System.err.println("CHYBA! Zadali ste neplatnú hodnotu. Zadajte číslo od 0 do 2024.");
+                        }
+                    }
+                    int vyberDostupnost = 0;
+                    while (true) {
+                        System.out.println("Vyberte dostupnost knihy:");
+                        System.out.println("1 - dostupna");
+                        System.out.println("2 - vypozicana");
+
+                        if (sc.hasNextInt()) {
+                        	vyberDostupnost = sc.nextInt();
+                            sc.nextLine();  
+                            if (vyberDostupnost == 1 || vyberDostupnost == 2) {
+                                break;  
+                            } else {
+                                System.err.println("CHYBA! Zadali ste neplatnú hodnotu. Zadajte 1 alebo 2.");
+                            }
+                        } else {
+                            System.err.println("CHYBA! Zadali ste neplatnú hodnotu. Zadajte 1 alebo 2.");
+                            sc.next();  
+                        }
+                    }
                     String dostupnost = "";
                     switch (vyberDostupnost) {
                         case 1:
@@ -104,44 +170,83 @@ public class AplikaciaKniznica extends Kniznica {
                     }
 
                     if (typ == 1) {
-                        System.out.println("Vyberte žáner knihy:");
-                        System.out.println("1 - dobrodruzny");
-                        System.out.println("2 - rytiersky");
-                        System.out.println("3 - sci-fi");
-                        System.out.println("4 - historicky");
-                        System.out.println("5 - romanticky");
-                        int vyberZaner = sc.nextInt();
+                        int vyberZaner = 0;
                         String zaner = "";
-                        switch (vyberZaner) {
-                            case 1:
-                                zaner = "dobrodruzny";
-                                aplikacia.pridajKnihu(new Romany(nazov, autor, zaner, rok, dostupnost, typKnihy));
-                                break;
-                            case 2:
-                                zaner = "rytiersky";
-                                aplikacia.pridajKnihu(new Romany(nazov, autor, zaner, rok, dostupnost, typKnihy));
-                                break;
-                            case 3:
-                                zaner = "sci-fi";
-                                aplikacia.pridajKnihu(new Romany(nazov, autor, zaner, rok, dostupnost, typKnihy));
-                                break;
-                            case 4:
-                                zaner = "historicky";
-                                aplikacia.pridajKnihu(new Romany(nazov, autor, zaner, rok, dostupnost, typKnihy));
-                                break;
-                            case 5:
-                                zaner = "romanticky";
-                                aplikacia.pridajKnihu(new Romany(nazov, autor, zaner, rok, dostupnost, typKnihy));
-                                break;
-                            default:
-                                break;
+                        boolean validnyZaner = false;
+
+                        while (!validnyZaner) {
+                            System.out.println("Vyberte žáner knihy:");
+                            System.out.println("1 - dobrodruzny");
+                            System.out.println("2 - rytiersky");
+                            System.out.println("3 - sci-fi");
+                            System.out.println("4 - historicky");
+                            System.out.println("5 - romanticky");
+
+                            if (sc.hasNextInt()) {
+                                vyberZaner = sc.nextInt();
+                                sc.nextLine();  
+
+                                switch (vyberZaner) {
+                                    case 1:
+                                        zaner = "dobrodruzny";
+                                        validnyZaner = true;
+                                        break;
+                                    case 2:
+                                        zaner = "rytiersky";
+                                        validnyZaner = true;
+                                        break;
+                                    case 3:
+                                        zaner = "sci-fi";
+                                        validnyZaner = true;
+                                        break;
+                                    case 4:
+                                        zaner = "historicky";
+                                        validnyZaner = true;
+                                        break;
+                                    case 5:
+                                        zaner = "romanticky";
+                                        validnyZaner = true;
+                                        break;
+                                    default:
+                                        System.err.println("CHYBA! Zadali ste neplatnú hodnotu. Zadajte číslo od 1 do 5.");
+                                        break;
+                                }
+                            } 
+                            else {
+                                sc.next();  
+                                System.err.println("CHYBA! Zadali ste neplatnú hodnotu. Zadajte číslo od 1 do 5.");
+                            }
                         }
-                    } else {
-                        System.out.println("Zadajte rocnik ucebnice: ");
-                        int rocnik = sc.nextInt();
-                        sc.nextLine();
-                        aplikacia.pridajKnihu(new Ucebnice(nazov, autor, rocnik, rok, dostupnost, typKnihy));
+
+                        if (validnyZaner) {
+                            aplikacia.pridajKnihu(new Romany(nazov, autor, zaner, rok, dostupnost, typKnihy));
+                        }
                     }
+                    else {
+                        int rocnik = 0;
+                        boolean validnyRocnik = false;
+
+                        while (!validnyRocnik) {
+                           
+                            if (sc.hasNextInt()) {
+                                rocnik = sc.nextInt();
+                                sc.nextLine();  
+                                if (rocnik >= 1500 && rocnik <= 2024) {
+                                    validnyRocnik = true;
+                                } else {
+                                    System.err.println("CHYBA! Neplatný ročník. Zadajte ročník v rozmedzí 1500 - 2024.");
+                                }
+                            } else {
+                                sc.next();  
+                                System.err.println("CHYBA! Zadali ste neplatnú hodnotu. Zadajte číslo od 1500 do 2024.");
+                            }
+                        }
+
+                        if (validnyRocnik) {
+                            aplikacia.pridajKnihu(new Ucebnice(nazov, autor, rocnik, rok, dostupnost, typKnihy));
+                        }
+                    }
+
                     break;
                 case 2:
                     System.out.println("Zadajte názov knihy, ktorú chcete upraviť:");
