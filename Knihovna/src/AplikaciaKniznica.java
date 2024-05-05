@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -47,10 +48,24 @@ public class AplikaciaKniznica extends Kniznica {
             System.out.println("10 - Ulozit do suboru");
             System.out.println("11 - Nacitat zo suboru");
             System.out.println("12 - Ukoncit");
-            System.out.println("Zadajte moznost: ");
-            int moznost = sc.nextInt();
-            sc.nextLine();
+            int moznost = 0;
 
+            while (true) {
+                System.out.println("Zadajte moznost: ");
+                try {
+                    moznost = sc.nextInt();
+                    if (moznost < 1 || moznost > 12) {
+                        System.err.println("CHYBA! Zadali ste neplatnú hodnotu.");
+                    } else {
+                        break;
+                    }
+                } catch (InputMismatchException e) {
+                    System.err.println("CHYBA! Zadali ste neplatnú hodnotu.");
+                    sc.next(); 
+                }
+            }
+            sc.nextLine(); 
+                                           
             switch (moznost) {
                 case 1:
                     System.out.println("Zadajte pocet autorov knihy: ");
